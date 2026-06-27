@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# CSVs de origem sao pesados (~40MB cada) e nao devem ir para o GitHub;
+# o README explica onde baixa-los novamente.
+data/*.csv
+csvs.tar.gz

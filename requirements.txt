@@ -1,0 +1,6 @@
+pandas==2.2.2
+SQLAlchemy==2.0.30
+pyodbc==5.1.0
+python-dotenv==1.0.1
+dash==2.17.0
+plotly==5.22.0
