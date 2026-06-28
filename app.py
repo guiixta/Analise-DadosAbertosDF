@@ -132,14 +132,6 @@ app.layout = html.Div(
             "Fonte: Portal de Dados Abertos do DF - dataset SIA/DATASUS "
             "(competencias de Jan/Fev/Mar de 2017)."
         ),
-        html.P(
-            "Observacao sobre granularidade: o SIA/DATASUS so disponibiliza os "
-            "atendimentos agregados por MES (competencia), e nao por dia/hora. "
-            "Por isso o grafico de evolucao temporal abaixo mostra a serie "
-            "mensal; o pipeline (ETL + banco + dashboard) esta pronto para uma "
-            "granularidade diaria/horaria caso a fonte de dados disponibilize.",
-            style={"fontStyle": "italic", "color": "#555"},
-        ),
         # ----- Filtros -----
         html.Div(
             style={"display": "flex", "gap": "20px", "margin": "20px 0"},

@@ -162,6 +162,9 @@ def carregar_arquivo(caminho_csv, engine, cache_estab, cache_proc, cache_carater
                 "cod_forma_organizacao": chunk["cod_forma_organizacao"],
                 "quantidade": chunk["quantidade"],
             })
+            # chunksize=200: o SQL Server limita uma instrucao a 2100 parametros.
+            # Com 7 colunas, 200 linhas = 1400 parametros por INSERT (seguro).
+            # Valores muito maiores aqui geram o erro "COUNT field incorrect".
             fato.to_sql("fato_atendimento", conn, if_exists="append", index=False, method="multi", chunksize=200)
 
         total_linhas += len(chunk)
