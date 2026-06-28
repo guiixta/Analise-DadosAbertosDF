@@ -118,11 +118,22 @@ def carregar_arquivo(caminho_csv, engine, cache_estab, cache_proc, cache_carater
     print(f"\n>> Processando {os.path.basename(caminho_csv)}")
     total_linhas = 0
 
+    
+    # Lista com a ordem exata das colunas identificadas no arquivo
+    nomes_colunas = [
+        "ano_mes", "estabelecimento_cnes", "complexidade", "cod_grupo", 
+        "grupo", "cod_subgrupo", "cod_procedimento", "procedimento", 
+        "quantidade", "cod_carater_atendimento", "carater_atendimento", 
+        "cod_forma_organizacao"
+    ]
+
     leitor = pd.read_csv(
         caminho_csv,
         encoding=ENCODING_ORIGEM,
         dtype=str,
         chunksize=CHUNK_SIZE,
+        header=0,
+        names=nomes_colunas
     )
 
     for numero_chunk, chunk in enumerate(leitor, start=1):
@@ -151,7 +162,7 @@ def carregar_arquivo(caminho_csv, engine, cache_estab, cache_proc, cache_carater
                 "cod_forma_organizacao": chunk["cod_forma_organizacao"],
                 "quantidade": chunk["quantidade"],
             })
-            fato.to_sql("fato_atendimento", conn, if_exists="append", index=False, method="multi", chunksize=1000)
+            fato.to_sql("fato_atendimento", conn, if_exists="append", index=False, method="multi", chunksize=200)
 
         total_linhas += len(chunk)
         print(f"   chunk {numero_chunk}: +{len(chunk)} linhas (acumulado: {total_linhas})")
@@ -165,9 +176,15 @@ def main():
     cache_carater = carregar_caracteres(engine, cache={})
     cache_estab, cache_proc = {}, {}
 
-    arquivos = sorted(glob.glob(ARQUIVO_PADRAO))
-    if not arquivos:
-        raise SystemExit(f"Nenhum CSV encontrado em {ARQUIVO_PADRAO}")
+    arquivos = [
+        os.path.join(DATA_DIR, "SIA012017.csv"),
+        os.path.join(DATA_DIR, "SIA022017.csv"),
+        os.path.join(DATA_DIR, "SIA032017.csv")
+    ]
+
+    for f in arquivos:
+        if not os.path.exists(f):
+            raise SystemExit(f"Arquivo obrigatório não encontrado: {f}\nVerifique se ele está na pasta data/")
 
     for caminho in arquivos:
         cache_estab, cache_proc = carregar_arquivo(caminho, engine, cache_estab, cache_proc, cache_carater)
